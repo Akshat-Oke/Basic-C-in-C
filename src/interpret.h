@@ -8,6 +8,6 @@ typedef enum
   INTERPRET_RUNTIME_ERROR
 } InterpretResult;
 
-InterpretResult interpret(const char *source);
+InterpretResult interpret(ASTnode *ast);
 
 #endif

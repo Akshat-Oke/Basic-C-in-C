@@ -1,8 +1,9 @@
 #ifndef toc_scanner
 #define toc_scanner
 
-typedef enum ToeknType {
+typedef enum TokenType {
   TOKEN_LEFT_PAREN, TOKEN_RIGHT_PAREN,
+  TOKEN_LEFT_BRACE, TOKEN_RIGHT_BRACE,
   TOKEN_COMMA, TOKEN_SEMICOLON,
   TOKEN_EQUAL,
   TOKEN_GREATER, TOKEN_EQUAL_EQUAL,

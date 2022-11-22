@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "interpret.h"
+// #include "interpret.h"
+#include "ast.h"
+#include "print_ast.h"
 
 static char *readFile(const char *path);
 static void runFile(const char *path);
@@ -14,12 +16,20 @@ int main()
 static void runFile(const char *path)
 {
   char *source = readFile(path);
-  InterpretResult result = interpret(source);
+  ASTNode *ast;
+  ast = newASTNode(NODE_MAIN_PROGRAM, NULL, 0);
+
+  bool result = buildAST(source, ast);
   free(source);
-  if (result == INTERPRET_COMPILE_ERROR)
+  if (!result)
+  {
     exit(65);
-  if (result == INTERPRET_RUNTIME_ERROR)
-    exit(70);
+  }
+  printAST(ast);
+  // if (result == INTERPRET_COMPILE_ERROR)
+  // exit(65);
+  // if (result == INTERPRET_RUNTIME_ERROR)
+  // exit(70);
 }
 static char *readFile(const char *path)
 {
