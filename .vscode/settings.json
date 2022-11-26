@@ -1,5 +1,8 @@
 {
   "files.associations": {
-    "value.h": "c"
+    "value.h": "c",
+    "ast.h": "c",
+    "print_ast.h": "c",
+    "interpret.h": "c"
   }
 }

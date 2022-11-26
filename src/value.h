@@ -25,16 +25,8 @@ typedef struct
 #define BOOL_VAL(value) ((Value){VAL_BOOL, {.boolean = value}})
 #define INT_VAL(value) ((Value){VAL_INT, {.integer = value}})
 
-// Value makeBool(bool value)
-// {
-//   Value v = {VAL_BOOL, {.boolean = value}};
-//   return v;
-// }
-// Value makeInt(int value)
-// {
-//   Value v = {VAL_INT, {.integer = value}};
-//   return v;
-// }
+Value *makeBool(bool value);
+Value *makeInt(int value);
 
 #define AS_BOOL(value) ((value).as.boolean)
 #define AS_INT(value) ((value).as.integer)

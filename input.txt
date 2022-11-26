@@ -1,2 +1,4 @@
-a = 4;
-b = a;
+int a, b, c;
+
+read b;
+write a;

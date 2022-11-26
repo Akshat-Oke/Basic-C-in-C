@@ -65,6 +65,7 @@ static void errorAt(Token *token, const char *message)
   }
   fprintf(stderr, ": %s\n", message);
   parser.hadError = true;
+  exit(65);
 }
 
 static void error(const char *message)
@@ -88,7 +89,7 @@ static void consume(TokenType type, const char *message)
 }
 static ASTNode *integer()
 {
-  return makePrevAsNode(NODE_INT);
+  return makePrevAsNode(NODE_INTEGER);
 }
 static void advance()
 {
@@ -263,7 +264,33 @@ static ASTNode *readStatement()
   // hashmap_set(map, (void *)start, length - 1, (uintptr_t)value);
 }
 static ASTNode *program();
+static ASTNode *statement();
+static ASTNode *block()
+{
+  ASTNode *node = makePrevAsNode(NODE_BLOCK);
+  while (!check(TOKEN_RIGHT_BRACE) && !isAtEnd())
+  {
+    addChild(node, statement());
+  }
+  consume(TOKEN_RIGHT_BRACE, "Expect '}' after block.");
+  return node;
+}
 static ASTNode *forStatement()
+{
+  ASTNode *node = makePrevAsNode(NODE_FOR_STMT);
+  consume(TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
+  addChild(node, expression());
+  consume(TOKEN_SEMICOLON, "Expected ';' after first clause.");
+  addChild(node, expression());
+  consume(TOKEN_SEMICOLON, "Expected ';' after second clause.");
+  addChild(node, expression());
+  consume(TOKEN_RIGHT_PAREN, "Expect ')' after 'for'.");
+  consume(TOKEN_LEFT_BRACE, "Expect '{'");
+  addChild(node, block());
+  // consume(TOKEN_RIGHT_BRACE, "Expect '}' after 'for' body.");
+  return node;
+}
+static ASTNode *forStatement1()
 {
   ASTNode *node = makePrevAsNode(NODE_FOR_STMT);
 
@@ -338,8 +365,13 @@ static ASTNode *declarations()
   if (match(TOKEN_INT))
   {
     addChild(declNode, makePrevAsNode(NODE_KEYWORD));
-    while (!isAtEnd() && !parser.hadError)
+    consume(TOKEN_IDENTIFIER, "Expected identifier in declaration list.");
+    addChild(declNode, makePrevAsNode(NODE_IDENTIFIER));
+
+    while (!isAtEnd() && !parser.hadError && !check(TOKEN_SEMICOLON))
     {
+      // printf("Type: %d\n", parser.current.type);
+      consume(TOKEN_COMMA, "Expected ',' after identifier.");
       consume(TOKEN_IDENTIFIER, "Expected identifier in declaration list.");
       if (parser.hadError)
       {
@@ -393,3 +425,25 @@ void printTokens(const char *source)
       break;
   }
 }
+const char *node_labels[20] = {
+    "NODE_MAIN_PROGRAM",
+    "NODE_PROGRAM",
+    "NODE_BLOCK",
+    "NODE_DECLARATION",
+    "NODE_FOR_STMT",
+    "NODE_ASSIGN_STMT",
+    "NODE_EXPR",
+    "NODE_EQUALITY",
+    "NODE_COMPARISON",
+    "NODE_TERM",
+    "NODE_FACTOR",
+    "NODE_UNARY",
+    "NODE_PRIMARY",
+    "NODE_INTEGER",
+    "NODE_IDENTIFIER",
+    "NODE_READ_STMT",
+    "NODE_WRITE_STMT",
+    "NODE_KEYWORD",
+    "NODE_LITERAL",
+    "NODE_OPERATOR",
+};

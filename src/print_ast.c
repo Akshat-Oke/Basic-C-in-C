@@ -2,6 +2,9 @@
 #include "ast.h"
 #include <stdio.h>
 #include <stdlib.h>
+extern const char *node_labels[20];
+//├── ─
+//└── └──
 
 void p(ASTNode *ast, int offset)
 {
@@ -11,9 +14,9 @@ void p(ASTNode *ast, int offset)
   }
   // printf("%.*s\n", ast->strlen, ast->start);
   if (ast->strlen >= 1)
-    printf("Node %d (%.*s)\n", ast->type, ast->strlen, ast->start);
+    printf("%s (%.*s)\n", node_labels[ast->type], ast->strlen, ast->start);
   else
-    printf("Node %d (_)\n", ast->type);
+    printf("%s (_)\n", node_labels[ast->type]);
   for (int i = 0; i < ast->length; i++)
   {
     p(&ast->children[i], offset + 2);

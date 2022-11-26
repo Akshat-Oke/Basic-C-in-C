@@ -1,5 +1,5 @@
-#ifndef toc_ast
-#define toc_ast
+#ifndef _toc_ast
+#define _toc_ast
 #include "value.h"
 #include <stdbool.h>
 
@@ -12,6 +12,7 @@ typedef enum
 {
   NODE_MAIN_PROGRAM,
   NODE_PROGRAM,
+  NODE_BLOCK,
   NODE_DECLARATION,
   NODE_FOR_STMT,
   NODE_ASSIGN_STMT,
@@ -22,7 +23,7 @@ typedef enum
   NODE_FACTOR,
   NODE_UNARY,
   NODE_PRIMARY,
-  NODE_INT,
+  NODE_INTEGER,
   NODE_IDENTIFIER,
   NODE_READ_STMT,
   NODE_WRITE_STMT,
@@ -41,6 +42,7 @@ typedef struct ASTNode
 } ASTNode;
 
 ASTNode *newASTNode(NodeType type, const char *start, int strlen);
+void printTokens(const char *s);
 // ASTNode *newIdentifierNode(const char* start, int strlen)
 // {
 //   ASTNode *node = (ASTNode *)malloc(sizeof(ASTNode));
@@ -55,5 +57,7 @@ ASTNode *newASTNode(NodeType type, const char *start, int strlen);
 void addChild(ASTNode *ast, ASTNode *child);
 
 bool buildAST(const char *source, ASTNode *ast);
+
+extern const char *node_labels[20];
 
 #endif
