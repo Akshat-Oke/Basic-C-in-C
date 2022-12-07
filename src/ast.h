@@ -16,6 +16,7 @@ typedef enum
   NODE_DECLARATION,
   NODE_FOR_STMT,
   NODE_ASSIGN_STMT,
+  NODE_EXPR_OR_ASSIGN,
   NODE_EXPR,
   NODE_EQUALITY,
   NODE_COMPARISON,
@@ -29,7 +30,10 @@ typedef enum
   NODE_WRITE_STMT,
   NODE_KEYWORD,
   NODE_LITERAL,
-  NODE_OPERATOR
+  NODE_OPERATOR,
+  // Will not appear in printed ast,
+  // but behaves same as NODE_LITERAL
+  NODE_GHOST
 } NodeType;
 
 typedef struct ASTNode
@@ -58,6 +62,6 @@ void addChild(ASTNode *ast, ASTNode *child);
 
 bool buildAST(const char *source, ASTNode *ast);
 
-extern const char *node_labels[20];
+extern const char *node_labels[22];
 
 #endif

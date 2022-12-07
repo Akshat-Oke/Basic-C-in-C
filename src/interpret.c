@@ -37,6 +37,7 @@ static void *declaration(ASTNode *);
 static void *program(ASTNode *);
 static void *for_statement(ASTNode *);
 static void *assignment(ASTNode *);
+static void *expr_or_assignment(ASTNode *);
 static void *expression(ASTNode *);
 static void *equality(ASTNode *);
 static void *comparison(ASTNode *);
@@ -50,6 +51,7 @@ static void *statement(ASTNode *);
 static void *read(ASTNode *);
 static void *write(ASTNode *);
 static void *operator(ASTNode *);
+static void *ghost(ASTNode *);
 
 Function rules[] = {
     [NODE_MAIN_PROGRAM] = main_program,
@@ -58,6 +60,7 @@ Function rules[] = {
     [NODE_DECLARATION] = declaration,
     [NODE_FOR_STMT] = for_statement,
     [NODE_ASSIGN_STMT] = assignment,
+    [NODE_EXPR_OR_ASSIGN] = expr_or_assignment,
     [NODE_EXPR] = expression,
     [NODE_EQUALITY] = equality,
     [NODE_COMPARISON] = comparison,
@@ -73,13 +76,14 @@ Function rules[] = {
     [NODE_LITERAL] =
     operator,
     [NODE_OPERATOR] =
-    operator, };
+    operator,
+    [NODE_GHOST] = ghost };
 
 #define VISIT(node) (rules[node.type])(&(node))
 
 void error(const char *message)
 {
-  fprintf(stderr, "Error: %s\n", message);
+  fprintf(stderr, "Runtime Error: %s\n", message);
   exit(70);
   hadError = true;
 }
@@ -119,6 +123,11 @@ static void *operator(ASTNode *node)
     return NULL;
   }
   return type;
+}
+
+static void *ghost(ASTNode *node)
+{
+  return makeBool(true);
 }
 
 static void *write(ASTNode *node)
@@ -198,9 +207,19 @@ static void *identifier(ASTNode *node)
   const char *start = node->start;
   int length = node->strlen;
   uintptr_t value;
+  if (!hashmap_get(declaredMap, start, length, &value))
+  {
+    // error("Undeclared variable ''.");
+    fprintf(stderr, "Runtime Error: Variable '%.*s' is not declared.\n", length, start);
+    exit(70);
+    hadError = true;
+    return NULL;
+  }
   if (!hashmap_get(map, start, length, &value))
   {
-    error("Undefined variable.");
+    fprintf(stderr, "Runtime Error: Variable '%.*s' is not initialized.\n", length, start);
+    exit(70);
+    hadError = true;
     return NULL;
   }
   return value;
@@ -387,7 +406,7 @@ static void *equality(ASTNode *node)
     }
     else
     {
-      fprintf(stderr, "Error: Types do not match\n");
+      fprintf(stderr, "Runtime Error: Types do not match\n");
       hadError = true;
       return NULL;
     }
@@ -399,10 +418,35 @@ static void *expression(ASTNode *node)
 {
   return equality(&node->children[0]);
 }
-
+static void *expr_or_assignment(ASTNode *node)
+{
+  if (node->length < 3)
+  {
+    return expression(node);
+  }
+  else
+  {
+    // first child is equality, ignore
+    // second is the ghost node, extract the var name from here
+    // third is the RHS expression.
+    ASTNode ghost = node->children[1];
+    const char *start = ghost.start;
+    int strlen = ghost.strlen;
+    uintptr_t v;
+    if (!hashmap_get(declaredMap, start, strlen, &v))
+    {
+      fprintf(stderr, "Runtime Error: Variable %.*s is not declared\n", strlen, start);
+      hadError = true;
+      // exit(70);
+      return NULL;
+    }
+    Value *value = VISIT(node->children[3]);
+    hashmap_set(map, start, strlen, (uintptr_t)value);
+    return value;
+  }
+}
 static void *assignment(ASTNode *node)
 {
-  // printf("Assignment %d\n", node->length);
   // first child is the var name
   // second child is '='
   // third child is the value
@@ -411,7 +455,7 @@ static void *assignment(ASTNode *node)
   uintptr_t v;
   if (!hashmap_get(declaredMap, start, strlen, &v))
   {
-    fprintf(stderr, "Error: Variable %.*s is not declared\n", strlen, start);
+    fprintf(stderr, "Runtime Error: Variable %.*s is not declared\n", strlen, start);
     hadError = true;
     // exit(70);
     return NULL;
@@ -419,7 +463,7 @@ static void *assignment(ASTNode *node)
   Value *value = VISIT(node->children[1]); // rules[node->children[1].type](&node->children[1]);
   hashmap_set(map, start, strlen, (uintptr_t)value);
   // printf("------\n");
-  printf("Type is bool: %d\n", IS_BOOL(*value));
+  // printf("Type is bool: %d\n", IS_BOOL(*value));
   return value;
 }
 static void *declaration(ASTNode *node)

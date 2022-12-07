@@ -51,7 +51,7 @@ static ASTNode *makePrevAsNode(NodeType type)
 
 static void errorAt(Token *token, const char *message)
 {
-  fprintf(stderr, "[line %d, col %d] Error", token->line, token->column);
+  fprintf(stderr, "[line %d, col %d] Syntax Error", token->line, token->column);
   if (token->type == TOKEN_EOF)
   {
     fprintf(stderr, " at end");
@@ -228,7 +228,19 @@ static ASTNode *expression()
 static ASTNode *writeStatement()
 {
   ASTNode *node = makePrevAsNode(NODE_WRITE_STMT);
-  addChild(node, expression());
+  // addChild(node, expression());
+  if (match(TOKEN_INT))
+  {
+    addChild(node, integer());
+  }
+  else if (match(TOKEN_IDENTIFIER))
+  {
+    addChild(node, identifier());
+  }
+  else
+  {
+    errorAtCurrent("Expect integer or identifier.");
+  }
   // printf("%d\n", AS_INT(val));
   return node;
 }
@@ -275,15 +287,43 @@ static ASTNode *block()
   consume(TOKEN_RIGHT_BRACE, "Expect '}' after block.");
   return node;
 }
+
+static ASTNode *exprOrAssignment()
+{
+  ASTNode *node = makePrevAsNode(NODE_EXPR_OR_ASSIGN);
+  addChild(node, expression());
+  if (check(TOKEN_EQUAL))
+  {
+    addChild(node, makePrevAsNode(NODE_GHOST));
+    match(TOKEN_EQUAL);
+    addChild(node, makePrevAsNode(NODE_LITERAL));
+    addChild(node, expression());
+  }
+  return node;
+}
+
 static ASTNode *forStatement()
 {
   ASTNode *node = makePrevAsNode(NODE_FOR_STMT);
   consume(TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
-  addChild(node, expression());
+  if (check(TOKEN_SEMICOLON))
+  {
+    addChild(node, makePrevAsNode(NODE_GHOST));
+  }
+  else
+  {
+    addChild(node, exprOrAssignment());
+  }
   consume(TOKEN_SEMICOLON, "Expected ';' after first clause.");
-  addChild(node, expression());
+  if (check(TOKEN_SEMICOLON))
+    addChild(node, makePrevAsNode(NODE_GHOST));
+  else
+    addChild(node, expression());
   consume(TOKEN_SEMICOLON, "Expected ';' after second clause.");
-  addChild(node, expression());
+  if (check(TOKEN_RIGHT_PAREN))
+    addChild(node, makePrevAsNode(NODE_GHOST));
+  else
+    addChild(node, exprOrAssignment());
   consume(TOKEN_RIGHT_PAREN, "Expect ')' after 'for'.");
   consume(TOKEN_LEFT_BRACE, "Expect '{'");
   addChild(node, block());
@@ -390,9 +430,14 @@ bool buildAST(const char *source, ASTNode *ast)
 {
   initScanner(source);
   advance();
-  // Value expr = expression();
+  // addChild(ast, exprOrAssignment());
   addChild(ast, declarations());
   addChild(ast, program());
+  if (ast->children[0].length == 0 && ast->children[1].length == 0)
+  {
+    errorAtCurrent("No declarations or statements found.");
+    return false;
+  }
   // printf("Answer: %d\n", AS_INT(expr));
   consume(TOKEN_EOF, "Expected end of file.");
   addChild(ast, makePrevAsNode(NODE_LITERAL));
@@ -425,13 +470,14 @@ void printTokens(const char *source)
       break;
   }
 }
-const char *node_labels[20] = {
+const char *node_labels[22] = {
     "NODE_MAIN_PROGRAM",
     "NODE_PROGRAM",
     "NODE_BLOCK",
     "NODE_DECLARATION",
     "NODE_FOR_STMT",
     "NODE_ASSIGN_STMT",
+    "NODE_EXPR_OR_ASSIGN",
     "NODE_EXPR",
     "NODE_EQUALITY",
     "NODE_COMPARISON",
@@ -446,4 +492,4 @@ const char *node_labels[20] = {
     "NODE_KEYWORD",
     "NODE_LITERAL",
     "NODE_OPERATOR",
-};
+    "NODE_GHOST"};

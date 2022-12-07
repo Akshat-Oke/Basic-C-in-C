@@ -1,4 +1,1 @@
-int a, b, c;
-
-read b;
-write a;
+int a, b, i3;

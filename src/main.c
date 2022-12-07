@@ -7,7 +7,7 @@
 static char *readFile(const char *path);
 static void runFile(const char *path);
 
-int main()
+int main(int argc, const char *argv[])
 {
   runFile("input.txt");
   return 0;

@@ -1,0 +1,171 @@
+bin/main
+NODE_MAIN_PROGRAM (_) [
+ └── NODE_DECLARATION (int) [
+ │ └── NODE_KEYWORD (int)
+ │ └── NODE_IDENTIFIER (a)
+ │ └── NODE_IDENTIFIER (b)
+ │ └── NODE_IDENTIFIER (i)
+ │ ]
+ └── NODE_PROGRAM (a) [
+ │ └── NODE_ASSIGN_STMT (a) [
+ │ │ └── NODE_LITERAL (=)
+ │ │ └── NODE_EQUALITY (=) [
+ │ │ │ └── NODE_COMPARISON (=) [
+ │ │ │ │ └── NODE_TERM (=) [
+ │ │ │ │ │ └── NODE_FACTOR (=) [
+ │ │ │ │ │ │ └── NODE_UNARY (=) [
+ │ │ │ │ │ │ │ └── NODE_PRIMARY (=) [
+ │ │ │ │ │ │ │ │ └── NODE_INTEGER (10)
+ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ ]
+ │ │ │ │ │ ]
+ │ │ │ │ ]
+ │ │ │ ]
+ │ │ ]
+ │ └── NODE_FOR_STMT (for) [
+ │ │ └── NODE_EXPR_OR_ASSIGN (() [
+ │ │ │ └── NODE_EQUALITY (() [
+ │ │ │ │ └── NODE_COMPARISON (() [
+ │ │ │ │ │ └── NODE_TERM (() [
+ │ │ │ │ │ │ └── NODE_FACTOR (() [
+ │ │ │ │ │ │ │ └── NODE_UNARY (() [
+ │ │ │ │ │ │ │ │ └── NODE_PRIMARY (() [
+ │ │ │ │ │ │ │ │ │ └── NODE_IDENTIFIER (i)
+ │ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ ]
+ │ │ │ │ │ ]
+ │ │ │ │ ]
+ │ │ │ └── NODE_LITERAL (=)
+ │ │ │ └── NODE_EQUALITY (=) [
+ │ │ │ │ └── NODE_COMPARISON (=) [
+ │ │ │ │ │ └── NODE_TERM (=) [
+ │ │ │ │ │ │ └── NODE_FACTOR (=) [
+ │ │ │ │ │ │ │ └── NODE_UNARY (=) [
+ │ │ │ │ │ │ │ │ └── NODE_PRIMARY (=) [
+ │ │ │ │ │ │ │ │ │ └── NODE_INTEGER (2)
+ │ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ ]
+ │ │ │ │ │ ]
+ │ │ │ │ ]
+ │ │ │ ]
+ │ │ └── NODE_EQUALITY (;) [
+ │ │ │ └── NODE_COMPARISON (;) [
+ │ │ │ │ └── NODE_TERM (;) [
+ │ │ │ │ │ └── NODE_FACTOR (;) [
+ │ │ │ │ │ │ └── NODE_UNARY (;) [
+ │ │ │ │ │ │ │ └── NODE_PRIMARY (;) [
+ │ │ │ │ │ │ │ │ └── NODE_IDENTIFIER (i)
+ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ ]
+ │ │ │ │ │ └── NODE_OPERATOR (+)
+ │ │ │ │ │ └── NODE_FACTOR (+) [
+ │ │ │ │ │ │ └── NODE_UNARY (+) [
+ │ │ │ │ │ │ │ └── NODE_PRIMARY (+) [
+ │ │ │ │ │ │ │ │ └── NODE_INTEGER (10)
+ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ ]
+ │ │ │ │ │ ]
+ │ │ │ │ ]
+ │ │ │ ]
+ │ │ └── NODE_EXPR_OR_ASSIGN (;) [
+ │ │ │ └── NODE_EQUALITY (;) [
+ │ │ │ │ └── NODE_COMPARISON (;) [
+ │ │ │ │ │ └── NODE_TERM (;) [
+ │ │ │ │ │ │ └── NODE_FACTOR (;) [
+ │ │ │ │ │ │ │ └── NODE_UNARY (;) [
+ │ │ │ │ │ │ │ │ └── NODE_PRIMARY (;) [
+ │ │ │ │ │ │ │ │ │ └── NODE_IDENTIFIER (i)
+ │ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ ]
+ │ │ │ │ │ ]
+ │ │ │ │ ]
+ │ │ │ └── NODE_LITERAL (=)
+ │ │ │ └── NODE_EQUALITY (=) [
+ │ │ │ │ └── NODE_COMPARISON (=) [
+ │ │ │ │ │ └── NODE_TERM (=) [
+ │ │ │ │ │ │ └── NODE_FACTOR (=) [
+ │ │ │ │ │ │ │ └── NODE_UNARY (=) [
+ │ │ │ │ │ │ │ │ └── NODE_PRIMARY (=) [
+ │ │ │ │ │ │ │ │ │ └── NODE_IDENTIFIER (i)
+ │ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ └── NODE_OPERATOR (+)
+ │ │ │ │ │ │ └── NODE_FACTOR (+) [
+ │ │ │ │ │ │ │ └── NODE_UNARY (+) [
+ │ │ │ │ │ │ │ │ └── NODE_PRIMARY (+) [
+ │ │ │ │ │ │ │ │ │ └── NODE_INTEGER (1)
+ │ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ ]
+ │ │ │ │ │ ]
+ │ │ │ │ ]
+ │ │ │ ]
+ │ │ └── NODE_BLOCK ({) [
+ │ │ │ └── NODE_ASSIGN_STMT (a) [
+ │ │ │ │ └── NODE_LITERAL (=)
+ │ │ │ │ └── NODE_EQUALITY (=) [
+ │ │ │ │ │ └── NODE_COMPARISON (=) [
+ │ │ │ │ │ │ └── NODE_TERM (=) [
+ │ │ │ │ │ │ │ └── NODE_FACTOR (=) [
+ │ │ │ │ │ │ │ │ └── NODE_UNARY (=) [
+ │ │ │ │ │ │ │ │ │ └── NODE_PRIMARY (=) [
+ │ │ │ │ │ │ │ │ │ │ └── NODE_IDENTIFIER (a)
+ │ │ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ └── NODE_OPERATOR (+)
+ │ │ │ │ │ │ │ └── NODE_FACTOR (+) [
+ │ │ │ │ │ │ │ │ └── NODE_UNARY (+) [
+ │ │ │ │ │ │ │ │ │ └── NODE_PRIMARY (+) [
+ │ │ │ │ │ │ │ │ │ │ └── NODE_IDENTIFIER (i)
+ │ │ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ ]
+ │ │ │ │ │ ]
+ │ │ │ │ ]
+ │ │ │ └── NODE_ASSIGN_STMT (b) [
+ │ │ │ │ └── NODE_LITERAL (=)
+ │ │ │ │ └── NODE_EQUALITY (=) [
+ │ │ │ │ │ └── NODE_COMPARISON (=) [
+ │ │ │ │ │ │ └── NODE_TERM (=) [
+ │ │ │ │ │ │ │ └── NODE_FACTOR (=) [
+ │ │ │ │ │ │ │ │ └── NODE_UNARY (=) [
+ │ │ │ │ │ │ │ │ │ └── NODE_PRIMARY (=) [
+ │ │ │ │ │ │ │ │ │ │ └── NODE_IDENTIFIER (b)
+ │ │ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ │ └── NODE_OPERATOR (*)
+ │ │ │ │ │ │ │ │ └── NODE_UNARY (*) [
+ │ │ │ │ │ │ │ │ │ └── NODE_PRIMARY (*) [
+ │ │ │ │ │ │ │ │ │ │ └── NODE_IDENTIFIER (i)
+ │ │ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ │ ]
+ │ │ │ │ │ │ ]
+ │ │ │ │ │ ]
+ │ │ │ │ ]
+ │ │ │ ]
+ │ │ ]
+ │ └── NODE_WRITE_STMT (write) [
+ │ │ └── NODE_IDENTIFIER (a)
+ │ │ ]
+ │ └── NODE_WRITE_STMT (write) [
+ │ │ └── NODE_IDENTIFIER (b)
+ │ │ ]
+ │ ]
+ └── NODE_LITERAL (_)
+ ]

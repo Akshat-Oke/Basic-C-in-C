@@ -112,18 +112,29 @@ static bool isAlpha(char c)
          (c >= 'A' && c <= 'Z') ||
          c == '_';
 }
+
+static TokenType matchKeyword(const char *keyword, TokenType type)
+{
+  int len = strlen(keyword);
+  if (scanner.current - scanner.start == len && memcmp(scanner.start + 1, keyword + 1, len - 1) == 0)
+  {
+    return type;
+  }
+  return TOKEN_IDENTIFIER;
+}
+
 static TokenType identifierType()
 {
   switch (scanner.start[0])
   {
   case 'f':
-    return TOKEN_FOR;
+    return matchKeyword("for", TOKEN_FOR);
   case 'i':
-    return TOKEN_INT;
+    return matchKeyword("int", TOKEN_INT);
   case 'r':
-    return TOKEN_READ;
+    return matchKeyword("read", TOKEN_READ);
   case 'w':
-    return TOKEN_WRITE;
+    return matchKeyword("write", TOKEN_WRITE);
   default:
     return TOKEN_IDENTIFIER;
   }
