@@ -60,7 +60,7 @@ void printTokens(const char *s);
 
 void addChild(ASTNode *ast, ASTNode *child);
 
-bool buildAST(const char *source, ASTNode *ast);
+bool buildAST(const char *source, ASTNode *ast, bool unaryNegation);
 
 extern const char *node_labels[22];
 

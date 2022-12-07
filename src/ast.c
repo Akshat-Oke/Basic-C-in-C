@@ -19,6 +19,7 @@ typedef struct
 Parser parser;
 hashmap *map;
 hashmap *declaredMap;
+bool enableUnary;
 
 ASTNode *newASTNode(NodeType type, const char *start, int strlen)
 {
@@ -159,7 +160,12 @@ static ASTNode *unary()
 {
   ASTNode *node = makePrevAsNode(NODE_UNARY);
 
-  if (match(TOKEN_MINUS))
+  if (!enableUnary && check(TOKEN_MINUS))
+  {
+    errorAtCurrent("Unary negation detected. Use '0 - x' instead of '-x', or use flag '-u' to enable unary negation.");
+    return node;
+  }
+  if (enableUnary && match(TOKEN_MINUS))
   {
     addChild(node, makePrevAsNode(NODE_OPERATOR));
     addChild(node, unary());
@@ -426,8 +432,9 @@ static ASTNode *declarations()
   }
   return declNode;
 }
-bool buildAST(const char *source, ASTNode *ast)
+bool buildAST(const char *source, ASTNode *ast, bool unaryNegation)
 {
+  enableUnary = unaryNegation;
   initScanner(source);
   advance();
   // addChild(ast, exprOrAssignment());
@@ -440,7 +447,7 @@ bool buildAST(const char *source, ASTNode *ast)
   }
   // printf("Answer: %d\n", AS_INT(expr));
   consume(TOKEN_EOF, "Expected end of file.");
-  addChild(ast, makePrevAsNode(NODE_LITERAL));
+  // addChild(ast, makePrevAsNode(NODE_LITERAL));
   // if (parser.hadError)
   //   return INTERPRET_COMPILE_ERROR;
   // if (parser.runtimeError)

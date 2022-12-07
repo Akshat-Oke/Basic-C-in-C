@@ -408,6 +408,7 @@ static void *equality(ASTNode *node)
     {
       fprintf(stderr, "Runtime Error: Types do not match\n");
       hadError = true;
+      exit(70);
       return NULL;
     }
   }

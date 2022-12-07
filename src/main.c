@@ -1,24 +1,41 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "interpret.h"
 #include "ast.h"
 #include "print_ast.h"
+
 static char *readFile(const char *path);
-static void runFile(const char *path);
+static void runFile(const char *path, bool unaryNegation);
 
 int main(int argc, const char *argv[])
 {
-  runFile("input.txt");
+  bool unaryNegation = false;
+  if (argc == 2)
+  {
+    // check if it is "-u" and enable unary negation
+    if (strlen(argv[1]) == 2 && argv[1][0] == '-' && argv[1][1] == 'u')
+    {
+      unaryNegation = true;
+    }
+    else
+    {
+      runFile(argv[1], unaryNegation);
+      return 0;
+    }
+  }
+  runFile("input.txt", unaryNegation);
   return 0;
 }
-static void runFile(const char *path)
+static void runFile(const char *path, bool unaryNegation)
 {
   char *source = readFile(path);
   ASTNode *ast;
   ast = newASTNode(NODE_MAIN_PROGRAM, NULL, 0);
 
-  bool result = buildAST(source, ast);
+  bool result = buildAST(source, ast, unaryNegation);
   free(source);
   if (!result)
   {
