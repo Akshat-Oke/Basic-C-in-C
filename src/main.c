@@ -26,27 +26,28 @@ int main(int argc, const char *argv[])
       return 0;
     }
   }
+  // run default input.txt
   runFile("input.txt", unaryNegation);
   return 0;
 }
 static void runFile(const char *path, bool unaryNegation)
 {
+  // read file into string
   char *source = readFile(path);
   ASTNode *ast;
   ast = newASTNode(NODE_MAIN_PROGRAM, NULL, 0);
-
+  // parse and build the AST first
   bool result = buildAST(source, ast, unaryNegation);
+  // source string's job is done
   free(source);
+  // check parsing error
   if (!result)
   {
     exit(65);
   }
   printAST(ast);
+  // run the interpreter on the AST
   interpret(ast);
-  // if (result == INTERPRET_COMPILE_ERROR)
-  // exit(65);
-  // if (result == INTERPRET_RUNTIME_ERROR)
-  // exit(70);
 }
 static char *readFile(const char *path)
 {

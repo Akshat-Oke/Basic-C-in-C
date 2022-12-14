@@ -17,8 +17,8 @@ typedef struct
 } Parser;
 
 Parser parser;
-hashmap *map;
-hashmap *declaredMap;
+hashmap *map;         // var values
+hashmap *declaredMap; // var declarations set
 bool enableUnary;
 
 ASTNode *newASTNode(NodeType type, const char *start, int strlen)
@@ -132,7 +132,7 @@ static ASTNode *primary()
 {
   ASTNode *node = makePrevAsNode(NODE_PRIMARY);
   ASTNode *child;
-  if (match(TOKEN_INT))
+  if (match(TOKEN_NUMBER))
   {
     child = integer();
   }
@@ -294,12 +294,28 @@ static ASTNode *block()
   return node;
 }
 
+static void checkExprIsIdentifier(ASTNode *node)
+{
+  while (node->length > 0)
+  {
+    if (node->length == 1)
+    {
+      node = &node->children[0];
+    }
+    else
+    {
+      error("Expressions cannot be lvalues.");
+      return;
+    }
+  }
+}
 static ASTNode *exprOrAssignment()
 {
   ASTNode *node = makePrevAsNode(NODE_EXPR_OR_ASSIGN);
   addChild(node, expression());
   if (check(TOKEN_EQUAL))
   {
+    checkExprIsIdentifier(&node->children[0]);
     addChild(node, makePrevAsNode(NODE_GHOST));
     match(TOKEN_EQUAL);
     addChild(node, makePrevAsNode(NODE_LITERAL));
@@ -435,24 +451,27 @@ static ASTNode *declarations()
 bool buildAST(const char *source, ASTNode *ast, bool unaryNegation)
 {
   enableUnary = unaryNegation;
+  // fire up the scanner (lexer)
   initScanner(source);
   advance();
   // addChild(ast, exprOrAssignment());
   addChild(ast, declarations());
   addChild(ast, program());
+  // program cannot be empty
   if (ast->children[0].length == 0 && ast->children[1].length == 0)
   {
     errorAtCurrent("No declarations or statements found.");
     return false;
   }
-  // printf("Answer: %d\n", AS_INT(expr));
+  if (ast->children[0].length == 0 || ast->children[1].length == 0)
+  {
+    ast->length = 1;
+  }
+  if (ast->children[0].length == 0)
+  {
+    ast->children[0] = ast->children[1];
+  }
   consume(TOKEN_EOF, "Expected end of file.");
-  // addChild(ast, makePrevAsNode(NODE_LITERAL));
-  // if (parser.hadError)
-  //   return INTERPRET_COMPILE_ERROR;
-  // if (parser.runtimeError)
-  //   return INTERPRET_RUNTIME_ERROR;
-  // return INTERPRET_OK;
   return !parser.hadError;
 }
 

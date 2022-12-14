@@ -87,7 +87,7 @@ void error(const char *message)
   exit(70);
   hadError = true;
 }
-
+// Returns the type of operator
 static void *operator(ASTNode *node)
 {
   char lexeme;
@@ -124,23 +124,16 @@ static void *operator(ASTNode *node)
   }
   return type;
 }
-
+// Ghost nodes are used in 'for' and assignment statements.
+// Since the condition clause can be skipped in a 'for' statement,
+// we need to return true for the condition clause.
 static void *ghost(ASTNode *node)
 {
   return makeBool(true);
 }
-
+// Write statement.
 static void *write(ASTNode *node)
 {
-  // const char *start = node->children[1].start;
-  // int len = node->children[1].strlen;
-  // uintptr_t value;
-  // if (!hashmap_get(map, start, len, &value))
-  // {
-  //   error("Variable not initialized");
-  //   return NULL;
-  // }
-  // Value *val = (Value *)value;
   Value *val = VISIT(node->children[0]);
   if (IS_BOOL(*val))
   {
@@ -188,6 +181,11 @@ static void *for_statement(ASTNode *node)
     VISIT(node->children[2]);
     // condition
     val = VISIT(node->children[1]);
+    if (!IS_BOOL(*val))
+    {
+      error("Condition must be a boolean");
+      return NULL;
+    }
   }
   return NULL;
 }
@@ -203,13 +201,11 @@ static void *main_program(ASTNode *node)
 
 static void *identifier(ASTNode *node)
 {
-  // printf("Identifier %d\n", node->length);
   const char *start = node->start;
   int length = node->strlen;
   uintptr_t value;
   if (!hashmap_get(declaredMap, start, length, &value))
   {
-    // error("Undeclared variable ''.");
     fprintf(stderr, "Runtime Error: Variable '%.*s' is not declared.\n", length, start);
     exit(70);
     hadError = true;
@@ -227,28 +223,22 @@ static void *identifier(ASTNode *node)
 
 static void *primary(ASTNode *node)
 {
-  // printf("Primary %d\n", node->length);
-
   if (node->length > 1)
   {
     // grouping
     return VISIT(node->children[1]);
   }
-  // printf("Primary type %d\n", node->children[0].type);
   return VISIT(node->children[0]);
 }
 
 static void *integer(ASTNode *node)
 {
-  // printf("Integer %d\n", node->length);
   int value = str_to_int(node->start, node->strlen);
   return makeInt(value);
 }
 
 static void *unary(ASTNode *node)
 {
-  // printf("unary %d\n", node->length);
-
   if (node->children[0].type == NODE_OPERATOR)
   {
     Value *right = VISIT(node->children[1]);
@@ -264,8 +254,6 @@ static void *unary(ASTNode *node)
 
 static void *factor(ASTNode *node)
 {
-  // printf("factor %d\n", node->length);
-
   Value *left = VISIT(node->children[0]);
   if (node->length == 1)
   {
@@ -302,8 +290,6 @@ static void *factor(ASTNode *node)
 
 static void *term(ASTNode *node)
 {
-  // printf("term %d\n", node->length);
-
   Value *left = VISIT(node->children[0]);
   if (node->length == 1)
     return left;
@@ -362,20 +348,7 @@ static void *comparison(ASTNode *node)
       return makeInt(0);
     }
 
-    // char operator=(node->children[i].start[0]);
     result = result > AS_INT(*right);
-
-    // switch (operator)
-    // {
-    // case GREATER_THAN:
-    // case '>':
-    //   result = result > AS_INT(*right);
-    //   break;
-    // default:
-    //   fprintf(stderr, "Invalid operator");
-    //   hadError = true;
-    //   break;
-    // }
   }
   return (void *)makeBool(result);
 }
@@ -438,7 +411,7 @@ static void *expr_or_assignment(ASTNode *node)
     {
       fprintf(stderr, "Runtime Error: Variable %.*s is not declared\n", strlen, start);
       hadError = true;
-      // exit(70);
+      exit(70);
       return NULL;
     }
     Value *value = VISIT(node->children[3]);
@@ -458,7 +431,7 @@ static void *assignment(ASTNode *node)
   {
     fprintf(stderr, "Runtime Error: Variable %.*s is not declared\n", strlen, start);
     hadError = true;
-    // exit(70);
+    exit(70);
     return NULL;
   }
   Value *value = VISIT(node->children[1]); // rules[node->children[1].type](&node->children[1]);
@@ -469,7 +442,6 @@ static void *assignment(ASTNode *node)
 }
 static void *declaration(ASTNode *node)
 {
-  // printf("De");
   // skip first child as it is the keyword
   for (int i = 1; i < node->length; i++)
   {
@@ -486,10 +458,17 @@ static void *declaration(ASTNode *node)
   return NULL;
 }
 
+/// @brief Interprets the given AST by walking over it recursively.
+/// Visit function table given in `rules`
+/// @param ast Root node of the AST
+/// @return INTERPRET_OK if the AST was interpreted successfully
+/// Terminates program on error.
 InterpretResult interpret(ASTNode *ast)
 {
   map = hashmap_create();
   declaredMap = hashmap_create();
+  // VISIT((*ast));
+  // Run the AST
   (rules[NODE_MAIN_PROGRAM])(ast);
   return INTERPRET_OK;
 }

@@ -11,7 +11,7 @@ typedef enum TokenType {
   TOKEN_STAR, TOKEN_SLASH,
   // Keywords
   TOKEN_FOR, TOKEN_INT, TOKEN_READ,
-  TOKEN_NUMBER,
+  TOKEN_NUMBER, //number literal (123, 234)
   TOKEN_WRITE,
   TOKEN_IDENTIFIER,
   TOKEN_ERROR, TOKEN_EOF

@@ -37,7 +37,7 @@ static Token makeToken(TokenType type)
   token.start = scanner.start;
   token.length = (int)(scanner.current - scanner.start);
   token.line = scanner.line;
-  token.column = scanner.column;
+  token.column = scanner.column - token.length;
   return token;
 }
 
@@ -48,7 +48,7 @@ static Token errorToken(const char *message)
   token.start = message;
   token.length = (int)strlen(message);
   token.line = scanner.line;
-  token.column = scanner.column;
+  token.column = scanner.column - token.length;
   return token;
 }
 
@@ -86,8 +86,8 @@ static void skipWhitespace()
       break;
     case '\n':
       scanner.line++;
-      scanner.column = 1;
       advance();
+      scanner.column = 1;
       break;
     default:
       return;
@@ -104,13 +104,11 @@ static Token number()
 {
   while (isDigit(peek()))
     advance();
-  return makeToken(TOKEN_INT);
+  return makeToken(TOKEN_NUMBER);
 }
 static bool isAlpha(char c)
 {
-  return (c >= 'a' && c <= 'z') ||
-         (c >= 'A' && c <= 'Z') ||
-         c == '_';
+  return (c >= 'a' && c <= 'z');
 }
 
 static TokenType matchKeyword(const char *keyword, TokenType type)
@@ -142,7 +140,6 @@ static TokenType identifierType()
 }
 static Token identifier()
 {
-  // while (isAlpha(peek()) || isDigit(peek()))
   while (isAlpha(peek()))
     advance();
   return makeToken(identifierType());

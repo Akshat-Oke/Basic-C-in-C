@@ -1,6 +1,4 @@
-int a, b, i;
-
-a=-2>6;
-write a;
-a = a==7;
-b = a+1;
+int a, b, fors;
+b=3;
+a=2;
+read b;
